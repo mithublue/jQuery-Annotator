@@ -1,0 +1,4 @@
+- delete annotation
+- change annotation on settings change , make popup style cracked
+- instant click on shape sticks shape with mouse pointer
+- cross data populate in settings panel

@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <style>
+        .selectedShape{
+            box-shadow: inset 0 0 0 3px #ffffff;
+        }
+        .circle{
+            -webkit-border-radius: 1000px;
+            -moz-border-radius: 1000px;
+            border-radius: 1000px;
+        }
+        .ja_ground{
+            position:relative;
+        }
+        .ja_annotation_wrapper{
+            position: absolute; top: 0; bottom: 0; right: 0;left: 0;z-index: 99999;
+        }
+        .ja-annotation-box{
+            background: #000000;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .js-annotation-arrow-down{
+            left: 40%;
+            top: 100%;
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid rgba(0, 0, 0, 1);
+        }
+        .ja-annotation-box h1{
+            font-size:18px;
+            margin-bottom: 5px;
+        }
+        .ja-annotation-box p{
+            font-size: 15px;
+        }
+        .rect .ui-resizable-se{
+            right:-5px;
+            bottom:-5px;
+        }
+        .circle .ui-resizable-se{
+            right: 15px;
+            bottom: 15px;
+        }
+        .ja_ground{
+            width: 500px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main">
+    <div class="navigation">
+        <a href="javascript:">1</a>
+        <a href="javascript:">2</a>
+    </div>
+    <a href="javascript:" class="get_data">Get Data</a>
+    <div class="mode_panel">
+        <a class="btn btn-default" href="javascript:" data-mode="edit">Edit</a>
+        <a class="btn btn-default" href="javascript:" data-mode="preview">Preview</a>
+    </div>
+    <div class="ja_ground_wrapper">
+        <div class="ja_ground ja_ground-1">
+            <img src="img/aromatic-blur-caffeine-977875.jpg" alt="" width="500">
+        </div>
+        <div class="ja_ground ja_ground-2">
+            <img src="img/aromatic-blur-caffeine-977875.jpg" alt="" width="500">
+        </div>
+    </div>
+    <div id="settings-wrap">
+        <div class="container-fluid">
+            <h2>Settings</h2>
+            <div class="row">
+                <!-- Popups -->
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div id="panel-disabler"></div>
+                        <div class="panel-heading">Annotations</div>
+                        <div class="panel-body">
+                            <form class="annotations_settings">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label col-form-label-sm">Title</label>
+                                            <div class="col-sm-10">
+                                                <input name="tooltip_data[title]" _point="" type="text" class="form-control" id="input-title" placeholder="Enter title">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label col-form-label-sm">Text</label>
+                                            <div class="col-sm-10">
+                                                <textarea name="tooltip_data[content]" class="form-control" rows="3" id="textarea-text"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Text Color</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input name="tooltip_settings[text_color]" type="color" class="form-control" id="color-text-color" value="#ffffff">
+                                                    <span class="input-group-addon" id="color-text-color-hex">#fff</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- ID -->
+
+                                        <div class="form-group row">
+                                            <label class="col-md-2 col-form-label">ID</label>
+                                            <div class="col-md-10">
+                                                <input name="tooltip_settings[id]" type="text" class="form-control" id="input-id" placeholder="Enter ID">
+                                                <p class="help-block">Used for deep linking</p>
+                                            </div>
+                                        </div>
+                                        <!-- Deep linking URL -->
+                                        <div class="form-group row">
+                                            <label class="col-md-2 control-label">Deep Linking URL</label>
+                                            <div class="col-md-10">
+                                                <input name="tooltip_settings[url]" type="text" class="form-control" id="input-diplinking_url" placeholder="Enter URL">
+                                                <p id="input-deep-link-url-help" class="help-block"></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-2 control-label">Shape Type</label>
+                                            <div class="col-md-10">
+                                                <select name="shape">
+                                                    <option value="rect">Rectangle</option>
+                                                    <option value="circle">Circle</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-2 control-label">Left</label>
+                                            <div class="col-md-10">
+                                                <input name="shape_left" type="text" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-2 control-label">Top</label>
+                                            <div class="col-md-10">
+                                                <input name="shape_top" type="text" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-2 control-label">Width</label>
+                                            <div class="col-md-10">
+                                                <input name="shape_width" type="text" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-2 control-label">Height</label>
+                                            <div class="col-md-10">
+                                                <input name="shape_height" type="text" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-2 control-label">Delete</label>
+                                            <div class="col-md-10">
+                                                <input type="submit" class="btn btn-danger deleteAnnotation" data-toggle="modal" data-target="#modal-delete"> Delete Annotation</input>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <!-- Tint Color -->
+                                        <div class="form-group row">
+                                            <label for="color-tint-color" class="col-md-3 control-label">Tint Color</label>
+                                            <div class="col-md-9">
+                                                <div class="input-group">
+                                                    <input type="color" class="form-control" id="color-tint-color" value="#000000">
+                                                    <span class="input-group-addon" id="color-tint-color-hex">#000</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Style -->
+                                        <!--<div class="form-group">
+                                            <label class="col-md-3 control-label">Style</label>
+                                            <div class="col-md-9">
+                                                <div class="btn-group btn-group-no-margin" data-toggle="buttons" id="btn-group-style-circle">
+                                                    <label class="btn btn-default active">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-1" checked><div class="icon-in-label ndd-spot-icon icon-style-1"><div class="ndd-icon-main-element"></div><div class="ndd-icon-border-element"></div></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-2"><div class="icon-in-label ndd-spot-icon icon-style-2"><div class="ndd-icon-main-element"></div><div class="ndd-icon-border-element"></div></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-3"><div class="icon-in-label ndd-spot-icon icon-style-3"><div class="ndd-icon-main-element"></div><div class="ndd-icon-border-element"></div></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-4"><div class="icon-in-label ndd-spot-icon icon-style-4"><div class="ndd-icon-main-element"></div><div class="ndd-icon-border-element"></div></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-5"><div class="icon-in-label ndd-spot-icon icon-style-5"><img src="img/annotator-pro/icon_loc_01.png"></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-6"><div class="icon-in-label ndd-spot-icon icon-style-6"><img src="img/annotator-pro/icon_loc_02.png"></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-7"><div class="icon-in-label ndd-spot-icon icon-style-7"><img src="img/annotator-pro/icon_loc_03.png"></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-8"><div class="icon-in-label ndd-spot-icon icon-style-8"><img src="img/annotator-pro/icon_loc_04.png"></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-9"><div class="icon-in-label ndd-spot-icon icon-style-9"><img src="img/annotator-pro/icon_loc_05.png"></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-10"><div class="icon-in-label ndd-spot-icon icon-style-10"><img src="img/annotator-pro/icon_loc_06.png"></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-11"><div class="icon-in-label ndd-spot-icon icon-style-11"><img src="img/annotator-pro/icon_loc_07.png"></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-12"><div class="icon-in-label ndd-spot-icon icon-style-12"><img src="img/annotator-pro/icon_loc_08.png"></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-13"><div class="icon-in-label ndd-spot-icon icon-style-13"><img src="img/annotator-pro/icon_loc_09.png"></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-0"><div style="height: 44px; line-height: 44px;">Invisible</div>
+                                                    </label>
+                                                </div>
+
+                                                <div class="btn-group btn-group-no-margin" data-toggle="buttons" id="btn-group-style-rect">
+                                                    <label class="btn btn-default active">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-rect-1" checked><div class="icon-in-label ndd-spot-icon icon-style-rect-1"><div class="ndd-icon-main-element"></div><div class="ndd-icon-border-element"></div></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-rect-2"><div class="icon-in-label ndd-spot-icon icon-style-rect-2"><div class="ndd-icon-main-element"></div><div class="ndd-icon-border-element"></div></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-rect-3"><div class="icon-in-label ndd-spot-icon icon-style-rect-3"><div class="ndd-icon-main-element"></div><div class="ndd-icon-border-element"></div></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-rect-4"><div class="icon-in-label ndd-spot-icon icon-style-rect-4"><div class="ndd-icon-main-element"></div><div class="ndd-icon-border-element"></div></div>
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-style-rect-0"><div style="height: 44px; line-height: 44px;">Invisible</div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>-->
+                                        <!-- Popup Width -->
+                                        <!--<div class="form-group row">
+                                            <label class="col-md-3 control-label">Popup Width</label>
+                                            <div class="col-md-7">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="input-popup-width">
+                                                    <span class="input-group-addon" id="input-popup-width-addon">px</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" id="checkbox-popup-width-auto" checked>Auto
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>-->
+                                        <!-- Popup Height -->
+                                        <!--<div class="form-group row">
+                                            <label class="col-md-3 control-label">Popup Height</label>
+                                            <div class="col-md-7">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="input-popup-height">
+                                                    <span class="input-group-addon" id="input-popup-height-addon">px</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" id="checkbox-popup-height-auto" checked>Auto
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>-->
+
+                                        <!-- Popup Position -->
+
+                                        <!--<div class="form-group row">
+                                            <label for="radio-popup-position" class="col-md-3 control-label">Popup Position</label>
+                                            <div class="col-md-9">
+                                                <div class="btn-group" data-toggle="buttons">
+                                                    <label class="btn btn-default active">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-position-top" checked>Top
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-position-bottom">Bottom
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-position-left">Left
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="radio-popup-position" id="radio-popup-position-right">Right
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>-->
+                                    </div>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Navigation -->
+            </div>
+
+        </div>
+    </div>
+    <!--<div class="ja_ground">
+        <img src="img/nature.jpg" alt="">
+    </div>-->
+</div>
+<a href="javascript:">he he</a>
+<script src="js/jquery.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/js-annotator.js"></script>
+<script>
+    var selectedItem;
+    var ja_obj = [];
+
+    for ( var i = 0; i< 2;i++ ) {
+        ja_obj[i] = $('.ja_ground-' + (i+1)).js_annotator();
+    }
+    $('.ja_ground').first().show();
+    $('.ja_ground').last().hide();
+
+    $('.navigation a').click(function () {
+        var order = parseInt($(this).text()) - 1;
+        $('.ja_ground').css('display','none').eq(order).css('display','block');
+        selectedItem = order;
+    });
+
+    $('.get_data').click(function () {
+        var json_data = ja_obj[selectedItem].get_data();
+    })
+
+    // mode control
+    $('.mode_panel a').click(function () {
+        var data = ja_obj[selectedItem].get_data()
+        var mode = $(this).data('mode');
+        ja_obj[selectedItem].changeMode(mode);
+    })
+</script>
+</body>
+</html>
